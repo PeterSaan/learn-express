@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 const db = {};
 const sequelize = new Sequelize(database.development);
 
-export default (async () => {
+export default await (async () => {
   const files = readdirSync(__dirname)
     .filter(
       (file) => file.indexOf('.') !== 0

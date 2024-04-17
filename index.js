@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 import bodyParser from 'body-parser';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Sequelize, QueryTypes } from 'sequelize';
+import db from './models/index.js';
 
 const app = express();
 const port = 3000;
@@ -17,21 +17,8 @@ nunjucks.configure('views', {
 });
 
 app.get('/', async (req, res) => {
-	const sequelize = new Sequelize({
-		dialect: 'sqlite',
-		storage: 'db.sqlite'
-	});
-	const posts = await sequelize.query('SELECT * FROM posts', {
-		type: QueryTypes.SELECT
-	});
+	let posts = await db.Post.findAll();
 
-	try {
-		await sequelize.authenticate();
-		console.log('Connection has been established successfully.');
-	} catch (error) {
-		console.error('Unable to connect to the database:', error);
-	}
-	
 	console.log(posts);
 	res.render('index.njk');
 });
