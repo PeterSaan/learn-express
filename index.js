@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from './models/index.js';
+import * as paginate from './pagination.js'
 
 const app = express();
 const port = 3000;
@@ -17,10 +18,9 @@ nunjucks.configure('views', {
 });
 
 app.get('/', async (req, res) => {
-	let posts = await db.Post.findAll();
+	let [posts, pagination] = await paginate
 
-	console.log(posts);
-	res.render('index.njk');
+	res.render('index.njk', { posts, totalPages, pagination });
 });
 
 app.get('/answer', (req, res) => {
