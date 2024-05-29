@@ -4,7 +4,8 @@ import bodyParser from 'body-parser';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import db from './models/index.js';
-import * as paginate from './pagination.js'
+import paginate from './pagination.js'
+import postController from './controllers/postController.js';
 
 const app = express();
 const port = 3000;
@@ -18,19 +19,21 @@ nunjucks.configure('views', {
 });
 
 app.get('/', async (req, res) => {
-	let [posts, pagination] = await paginate
+	let [posts, pagination] = await paginate(db.Post, req.query.page, 20);
 
-	res.render('index.njk', { posts, totalPages, pagination });
+	res.render('index.njk', { posts, pagination });
 });
 
 app.get('/answer', (req, res) => {
 	res.render('answer.njk', req.query);
 });
 
-app.get('/answer', (req, res) => {
+app.post('/answer', (req, res) => {
 	res.render('answer.njk', {...req.body, ...req.query});
-})
+});
+
+app.use('/posts', postController);
 
 app.listen(port, () => {
-  	console.log(`Example app listening on port http://localhost:${port}`);
+  	console.log(`Example app listening on http://localhost:${port}`);
 });
